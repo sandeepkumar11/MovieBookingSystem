@@ -1,6 +1,8 @@
 package com.movie.booking.movie_service.service.Impl;
 
 import com.movie.booking.movie_service.entity.Movie;
+import com.movie.booking.movie_service.exceptions.MovieCreationException;
+import com.movie.booking.movie_service.exceptions.ResourceNotFoundException;
 import com.movie.booking.movie_service.mapper.MovieMapper;
 import com.movie.booking.movie_service.model.request.MovieRequest;
 import com.movie.booking.movie_service.model.response.MovieResponse;
@@ -22,84 +24,102 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public Optional<MovieResponse> createMovie(MovieRequest movieRequest) {
+    public MovieResponse createMovie(MovieRequest movieRequest) {
         Movie movie = MovieMapper.toEntity(movieRequest);
-        movie = movieRepository.save(movie);
-        return Optional.of(MovieMapper.toResponse(movie));
+        Movie savedMovie = Optional.of(movieRepository.save(movie))
+                .orElseThrow(() -> new MovieCreationException("Failed to create movie."));
+        return MovieMapper.toResponse(savedMovie);
     }
 
     @Override
-    public Optional<MovieResponse> getMovieById(String movieId) {
+    public MovieResponse getMovieById(String movieId) {
         return movieRepository.findById(movieId)
-                .map(MovieMapper::toResponse);
+                .map(MovieMapper::toResponse)
+                .orElseThrow(() -> new ResourceNotFoundException("Movie not found with ID: " + movieId));
     }
 
     @Override
     public List<MovieResponse> getAllMovies() {
-        return movieRepository.findAll().stream()
-                .map(MovieMapper::toResponse)
-                .toList();
+        return Optional.of(movieRepository.findAll().stream()
+                        .map(MovieMapper::toResponse)
+                        .toList())
+                .filter(list -> !list.isEmpty())
+                .orElseThrow(() -> new ResourceNotFoundException("No movies found."));
     }
 
     @Override
     public List<MovieResponse> getActiveMovies() {
-        return movieRepository.findAllByIsActive(true).stream()
-                .map(MovieMapper::toResponse)
-                .toList();
+        return Optional.of(movieRepository.findAllByIsActive(true).stream()
+                        .map(MovieMapper::toResponse)
+                        .toList())
+                .filter(list -> !list.isEmpty())
+                .orElseThrow(() -> new ResourceNotFoundException("No active movies found."));
     }
 
     @Override
     public List<MovieResponse> getInactiveMovies() {
-        return movieRepository.findAllByIsActive(false).stream()
-                .map(MovieMapper::toResponse)
-                .toList();
+        return Optional.of(movieRepository.findAllByIsActive(false).stream()
+                        .map(MovieMapper::toResponse)
+                        .toList())
+                .filter(list -> !list.isEmpty())
+                .orElseThrow(() -> new ResourceNotFoundException("No inactive movies found."));
     }
 
     @Override
-    public Optional<MovieResponse> updateMovie(String movieId, MovieRequest movieRequest) {
+    public MovieResponse updateMovie(String movieId, MovieRequest movieRequest) {
         return movieRepository.findById(movieId)
                 .map(movie -> {
                     MovieMapper.updateEntity(movie, movieRequest);
                     movie = movieRepository.save(movie);
                     return MovieMapper.toResponse(movie);
-                });
+                })
+                .orElseThrow(() -> new ResourceNotFoundException("Movie not found with ID: " + movieId));
     }
 
     @Override
     public boolean deleteMovie(String movieId) {
-        return movieRepository.findById(movieId).map(movie -> {
-            movie.setActive(false);
-            movieRepository.save(movie);
-            return true;
-        }).orElse(false);
+        return movieRepository.findById(movieId)
+                .map(movie -> {
+                    movieRepository.delete(movie);
+                    return true;
+                })
+                .orElseThrow(() -> new ResourceNotFoundException("Movie not found with ID: " + movieId));
     }
 
     @Override
     public List<MovieResponse> searchMovies(String query) {
-        return movieRepository.findAll().stream()
-                .filter(movie -> movie.getName().toLowerCase().contains(query.toLowerCase()))
-                .map(MovieMapper::toResponse)
-                .toList();
+        return Optional.of(movieRepository.findAll().stream()
+                        .filter(movie -> movie.getName().toLowerCase().contains(query.toLowerCase()))
+                        .map(MovieMapper::toResponse)
+                        .toList())
+                .filter(list -> !list.isEmpty())
+                .orElseThrow(() -> new ResourceNotFoundException("Movie not found with query: " + query));
     }
 
     @Override
     public List<MovieResponse> filterMoviesByGenre(String genre) {
-        return movieRepository.findAllByGenresContaining(genre).stream()
-                .map(MovieMapper::toResponse)
-                .toList();
+        return Optional.of(movieRepository.findAllByGenresContaining(genre).stream()
+                        .map(MovieMapper::toResponse)
+                        .toList())
+                .filter(list -> !list.isEmpty())
+                .orElseThrow(() -> new ResourceNotFoundException("No movies found with genre: " + genre));
     }
 
     @Override
     public List<MovieResponse> filterMoviesByLanguage(String language) {
-        return movieRepository.findAllByLanguage(language).stream()
-                .map(MovieMapper::toResponse)
-                .toList();
+        return Optional.of(movieRepository.findAllByLanguage(language).stream()
+                        .map(MovieMapper::toResponse)
+                        .toList())
+                .filter(list -> !list.isEmpty())
+                .orElseThrow(() -> new ResourceNotFoundException("No movies found with language: " + language));
     }
 
     @Override
     public List<MovieResponse> filterMoviesByReleaseDate(Instant startDate, Instant endDate) {
-        return movieRepository.findAllByReleaseDateBetween(startDate, endDate).stream()
-                .map(MovieMapper::toResponse)
-                .toList();
+        return Optional.of(movieRepository.findAllByReleaseDateBetween(startDate, endDate).stream()
+                        .map(MovieMapper::toResponse)
+                        .toList())
+                .filter(list -> !list.isEmpty())
+                .orElseThrow(() -> new ResourceNotFoundException("No movies found between release dates: " + startDate + " and " + endDate));
     }
 }

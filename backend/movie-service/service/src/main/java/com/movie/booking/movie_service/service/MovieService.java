@@ -5,12 +5,11 @@ import com.movie.booking.movie_service.model.response.MovieResponse;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 
 public interface MovieService {
-    Optional<MovieResponse> createMovie(MovieRequest movieRequest);
+    MovieResponse createMovie(MovieRequest movieRequest);
 
-    Optional<MovieResponse> getMovieById(String movieId);
+    MovieResponse getMovieById(String movieId);
 
     List<MovieResponse> getAllMovies();
 
@@ -18,7 +17,7 @@ public interface MovieService {
 
     List<MovieResponse> getInactiveMovies();
 
-    Optional<MovieResponse> updateMovie(String movieId, MovieRequest movieRequest);
+    MovieResponse updateMovie(String movieId, MovieRequest movieRequest);
 
     boolean deleteMovie(String movieId);
 
