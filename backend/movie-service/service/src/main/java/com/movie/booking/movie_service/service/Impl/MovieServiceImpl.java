@@ -8,12 +8,16 @@ import com.movie.booking.movie_service.model.request.MovieRequest;
 import com.movie.booking.movie_service.model.response.MovieResponse;
 import com.movie.booking.movie_service.repository.MovieRepository;
 import com.movie.booking.movie_service.service.MovieService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
+// TODO: Add Pagination and Sorting
+
+@Slf4j
 @Service
 public class MovieServiceImpl implements MovieService {
 
@@ -28,6 +32,7 @@ public class MovieServiceImpl implements MovieService {
         Movie movie = MovieMapper.toEntity(movieRequest);
         Movie savedMovie = Optional.of(movieRepository.save(movie))
                 .orElseThrow(() -> new MovieCreationException("Failed to create movie."));
+        log.info("Movie created successfully with ID: {}", savedMovie.getId());
         return MovieMapper.toResponse(savedMovie);
     }
 
@@ -40,6 +45,7 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public List<MovieResponse> getAllMovies() {
+        log.warn("Add pagination and sorting to getAllMovies method.");
         return Optional.of(movieRepository.findAll().stream()
                         .map(MovieMapper::toResponse)
                         .toList())
@@ -67,6 +73,7 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public MovieResponse updateMovie(String movieId, MovieRequest movieRequest) {
+        log.info("Get update movie request for movieId: {}", movieId);
         return movieRepository.findById(movieId)
                 .map(movie -> {
                     MovieMapper.updateEntity(movie, movieRequest);
@@ -78,6 +85,7 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public boolean deleteMovie(String movieId) {
+        log.info("Get delete movie request for movieId: {}", movieId);
         return movieRepository.findById(movieId)
                 .map(movie -> {
                     movieRepository.delete(movie);

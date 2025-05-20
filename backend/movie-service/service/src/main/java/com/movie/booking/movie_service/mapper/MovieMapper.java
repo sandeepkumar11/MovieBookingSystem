@@ -79,12 +79,12 @@ public class MovieMapper {
 
         return castRequests.stream()
                 .map(r -> new CastMember(
-                        r.getId() != null ? r.getId() : UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE,
-                        r.getName(),
-                        r.getImageUrl(),
-                        r.getCharacterName(),
-                        r.getRole(),
-                        r.getDescription()
+                        r.id() != null ? r.id() : UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE,
+                        r.name(),
+                        r.imageUrl(),
+                        r.characterName(),
+                        r.role(),
+                        r.description()
                 )).collect(Collectors.toList());
     }
 }
