@@ -50,7 +50,9 @@ public class MovieMapper {
                 movie.getCountry(),
                 movie.getReleaseDate(),
                 movie.getCreatedAt(),
-                movie.getUpdatedAt()
+                movie.getCreatedBy(),
+                movie.getUpdatedAt(),
+                movie.getUpdatedBy()
         );
     }
 
