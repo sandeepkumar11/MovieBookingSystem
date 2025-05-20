@@ -3,6 +3,9 @@ spring:
     name: movie-service
   profiles:
     active: local
+  output:
+    ansi:
+      enabled: always
 
 server:
   port: 8080
