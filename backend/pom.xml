@@ -26,6 +26,7 @@
             <id>backend</id>
             <modules>
                 <module>movie-service</module>
+                <module>cinema-service</module>
             </modules>
             <activation>
                 <activeByDefault>true</activeByDefault>
