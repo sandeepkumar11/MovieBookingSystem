@@ -46,15 +46,15 @@ public class MovieServiceTest {
         assertThat(response.name()).isEqualTo("Test Movie");
     }
 
-//    @Test
-//    void createMovie_shouldThrowException_whenSaveFails() {
-//        MovieRequest request = new MovieRequest();
-//        when(movieRepository.save(any(Movie.class))).thenReturn(null);
-//
-//        assertThatThrownBy(() -> movieService.createMovie(request))
-//                .isInstanceOf(MovieCreationException.class);
-//    }
-//
+    @Test
+    void createMovie_shouldThrowException_whenSaveFails() {
+        MovieRequest request = new MovieRequest();
+        when(movieRepository.save(any(Movie.class))).thenThrow(new MovieCreationException("DB error"));
+
+        assertThatThrownBy(() -> movieService.createMovie(request))
+                .isInstanceOf(MovieCreationException.class);
+    }
+
     @Test
     void getMovieById_shouldReturnResponse() {
         Movie movie = new Movie();
