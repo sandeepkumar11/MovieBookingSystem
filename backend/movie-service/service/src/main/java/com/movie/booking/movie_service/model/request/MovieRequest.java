@@ -1,5 +1,6 @@
 package com.movie.booking.movie_service.model.request;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.Instant;

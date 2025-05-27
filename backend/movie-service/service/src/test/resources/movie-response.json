@@ -1,0 +1,24 @@
+{
+  "id": 1,
+  "name": "Inception",
+  "genres": ["Sci-Fi", "Thriller"],
+  "languages": ["English", "French"],
+  "duration": 148,
+  "directors": [
+    { "id": 1, "name": "Christopher Nolan" }
+  ],
+  "producers": [
+    { "id": 2, "name": "Emma Thomas" }
+  ],
+  "cast": [
+    { "id": 3, "name": "Leonardo DiCaprio" }
+  ],
+  "description": "A mind-bending thriller.",
+  "posterUrl": "https://example.com/poster.jpg",
+  "rating": 8.8,
+  "isActive": true,
+  "trailerUrl": "https://example.com/trailer.mp4",
+  "movieUrl": "https://example.com/movie.mp4",
+  "country": "USA",
+  "releaseDate": "2010-07-16T00:00:00Z"
+}
