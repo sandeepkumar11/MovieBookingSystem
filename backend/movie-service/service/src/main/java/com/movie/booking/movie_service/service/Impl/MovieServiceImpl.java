@@ -30,9 +30,13 @@ public class MovieServiceImpl implements MovieService {
     @Override
     public MovieResponse createMovie(MovieRequest movieRequest) {
         Movie movie = MovieMapper.toEntity(movieRequest);
-        Movie savedMovie = Optional.of(movieRepository.save(movie))
-                .orElseThrow(() -> new MovieCreationException("Failed to create movie."));
-        log.info("Movie created successfully with ID: {}", savedMovie.getId());
+        Movie savedMovie = movieRepository.save(movie);
+        try {
+            log.info("Movie created successfully with Name: {}", savedMovie.getName());
+        } catch (Exception e) {
+            log.error("Failed to create movie: {}", movieRequest, e);
+            throw new MovieCreationException("Failed to create movie.", e);
+        }
         return MovieMapper.toResponse(savedMovie);
     }
 
@@ -88,7 +92,8 @@ public class MovieServiceImpl implements MovieService {
         log.info("Get delete movie request for movieId: {}", movieId);
         return movieRepository.findById(movieId)
                 .map(movie -> {
-                    movieRepository.delete(movie);
+                    movie.setActive(false);
+                    movieRepository.save(movie);
                     return true;
                 })
                 .orElseThrow(() -> new ResourceNotFoundException("Movie not found with ID: " + movieId));
